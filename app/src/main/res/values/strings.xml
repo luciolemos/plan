@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Agenda Escolar</string>
-    <string name="bt_cadastrar">Cadastrar</string>
+    <string name="app_name" translatable="false">Plano de chamada</string>
+    <string name="bt_cadastrar" translatable="false">Cadastrar militar</string>
 </resources>

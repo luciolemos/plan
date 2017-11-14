@@ -1,10 +1,19 @@
 package br.senac.rn.agendaescolar.views;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,15 +46,15 @@ public class AlunoListaActivity extends AppCompatActivity {
         List<Aluno> alunos = new ArrayList<Aluno>();
 
         alunos.add(new Aluno(
-                "Lucio Flávio",
-                "Av Alexandrino de Alencar, 1592",
+                "Lucio Flávio Lemos",
+                "Rua Marechal Bitencourt, 1592, Tirol, Vila Militar",
                 "996360721",
                 "http://www.lemavorum.com.br",
                 10.0)
         );
 
         alunos.add(new Aluno(
-                "Carlos Bandeira",
+                "Carlos Bandeira de Melo",
                 "R da Diatomita, 357",
                 "996073082",
                 "http://www.facebook.com/doalceycarlos",
@@ -53,7 +62,7 @@ public class AlunoListaActivity extends AppCompatActivity {
         );
 
         alunos.add(new Aluno(
-                "Jalielson Andrade",
+                "Jalielson Andrade de Souza",
                 "R Baraúna, 408",
                 "988698986",
                 "http://www.facebook.com/jalielson.andrade",
@@ -61,7 +70,7 @@ public class AlunoListaActivity extends AppCompatActivity {
         );
 
         alunos.add(new Aluno(
-                "Janna Barbosa",
+                "Janna Barbosa Bissau",
                 "R Sebastião Barreto, 4449",
                 "988881402",
                 "http://www.facebook.com/jannabarbosa",
@@ -74,6 +83,7 @@ public class AlunoListaActivity extends AppCompatActivity {
                 alunos);
 
         lvAlunos.setAdapter(adapter);
+        registerForContextMenu(lvAlunos);
     }
 
     private void definirEventos() {
@@ -88,5 +98,55 @@ public class AlunoListaActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu_lista_opcoes,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo alunoEscolhido;
+                alunoEscolhido=(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+          Aluno aluno=(Aluno) lvAlunos.getItemAtPosition(alunoEscolhido.position);
+        switch (item.getItemId()){
+            case R.id.item_sms:
+                Intent intentSms = new Intent(Intent.ACTION_VIEW);
+                intentSms.setData(Uri.parse("sms:"+ aluno.getFone()));
+                item.setIntent(intentSms);
+                break;
+
+            case R.id.item_site:
+                Intent intentSite = new Intent(Intent.ACTION_VIEW);
+                intentSite.setData(Uri.parse(aluno.getSite()));
+                item.setIntent(intentSite);
+                break;
+
+            case R.id.item_mapa:
+                Intent intentMapa = new Intent(Intent.ACTION_VIEW);
+                intentMapa.setData(Uri.parse("geo:0,0?qm"+aluno.getEndereco()));
+                item.setIntent(intentMapa);
+                break;
+
+            case R.id.item_ligar:
+                if(ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.CALL_PHONE)
+                        !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(
+                            this,
+                            new String[]{Manifest.permission.CALL_PHONE},
+                            9);
+                }else{
+                    Intent intentLigar = new Intent(Intent.ACTION_CALL);
+                    intentLigar.setData(Uri.parse("tel:"+aluno.getFone()));
+                    item.setIntent(intentLigar);
+                }
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
 
 }
