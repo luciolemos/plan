@@ -1,4 +1,17 @@
 <resources>
-    <string name="app_name" translatable="false">Plano de chamada</string>
-    <string name="bt_cadastrar" translatable="false">Cadastrar militar</string>
+    <string name="app_name">Agenda Escolar</string>
+    <string name="bt_cadastrar">Cadastrar</string>
+    <string name="textview_nome">Nome</string>
+    <string name="textview_endereco">Endereço</string>
+    <string name="textview_fone">Fone</string>
+    <string name="textview_site">Site</string>
+    <string name="textview_nota">Nota</string>
+
+
+    <string name="form_seu_nome_aqui">Seu nome aqui</string>
+    <string name="form_seu_endereco_aqui">Seu endereço aqui</string>
+    <string name="form_seu_fone_aqui">Seu fone aqui</string>
+    <string name="form_seu_site_aqui">Seu site aqui</string>
+    <string name="btn_cadastrar">Cadastrar</string>
+
 </resources>

@@ -24,6 +24,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.senac.rn.agendaescolar.daos.AlunoDao;
 import br.senac.rn.agendaescolar.models.Aluno;
 
 public class AlunoListaActivity extends AppCompatActivity {
@@ -43,39 +44,7 @@ public class AlunoListaActivity extends AppCompatActivity {
         lvAlunos = (ListView) findViewById(R.id.lista_alunos);
         btCadastrar = (Button) findViewById(R.id.cadastrar);
 
-        List<Aluno> alunos = new ArrayList<Aluno>();
-
-        alunos.add(new Aluno(
-                "Lucio Flávio Lemos",
-                "Rua Marechal Bitencourt, 1592, Tirol, Vila Militar",
-                "996360721",
-                "http://www.lemavorum.com.br",
-                10.0)
-        );
-
-        alunos.add(new Aluno(
-                "Carlos Bandeira de Melo",
-                "R da Diatomita, 357",
-                "996073082",
-                "http://www.facebook.com/doalceycarlos",
-                10.0)
-        );
-
-        alunos.add(new Aluno(
-                "Jalielson Andrade de Souza",
-                "R Baraúna, 408",
-                "988698986",
-                "http://www.facebook.com/jalielson.andrade",
-                10.0)
-        );
-
-        alunos.add(new Aluno(
-                "Janna Barbosa Bissau",
-                "R Sebastião Barreto, 4449",
-                "988881402",
-                "http://www.facebook.com/jannabarbosa",
-                10.0)
-        );
+        List<Aluno> alunos = new AlunoDao(this).buscarTodos();
 
         ArrayAdapter<Aluno> adapter = new ArrayAdapter<Aluno>(
                 this,
@@ -101,52 +70,41 @@ public class AlunoListaActivity extends AppCompatActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.menu_lista_opcoes,menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_lista_opcoes, menu);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo alunoEscolhido;
-                alunoEscolhido=(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-          Aluno aluno=(Aluno) lvAlunos.getItemAtPosition(alunoEscolhido.position);
-        switch (item.getItemId()){
+        alunoEscolhido = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Aluno aluno = (Aluno) lvAlunos.getItemAtPosition(alunoEscolhido.position);
+        switch (item.getItemId()) {
             case R.id.item_sms:
                 Intent intentSms = new Intent(Intent.ACTION_VIEW);
-                intentSms.setData(Uri.parse("sms:"+ aluno.getFone()));
+                intentSms.setData(Uri.parse("sms:" + aluno.getFone()));
                 item.setIntent(intentSms);
                 break;
-
             case R.id.item_site:
                 Intent intentSite = new Intent(Intent.ACTION_VIEW);
                 intentSite.setData(Uri.parse(aluno.getSite()));
                 item.setIntent(intentSite);
                 break;
-
             case R.id.item_mapa:
                 Intent intentMapa = new Intent(Intent.ACTION_VIEW);
-                intentMapa.setData(Uri.parse("geo:0,0?qm"+aluno.getEndereco()));
+                intentMapa.setData(Uri.parse("geo:0,0?q=" + aluno.getEndereco()));
                 item.setIntent(intentMapa);
                 break;
-
             case R.id.item_ligar:
-                if(ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.CALL_PHONE)
-                        !=
-                        PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(
-                            this,
-                            new String[]{Manifest.permission.CALL_PHONE},
-                            9);
-                }else{
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 9);
+                } else {
                     Intent intentLigar = new Intent(Intent.ACTION_CALL);
-                    intentLigar.setData(Uri.parse("tel:"+aluno.getFone()));
+                    intentLigar.setData(Uri.parse("tel:" + aluno.getFone()));
                     item.setIntent(intentLigar);
                 }
                 break;
         }
         return super.onContextItemSelected(item);
     }
-
-
 }
